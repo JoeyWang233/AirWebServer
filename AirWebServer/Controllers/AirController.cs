@@ -27,6 +27,7 @@ namespace AirWebServer.Controllers{
     [ApiController]
     public class homeController : ControllerBase {
         [HttpGet]
+        // api/home/homeAll
         public ActionResult<HomeDataObject> homeAll(string type, int statusNo, int mcTransNo, int mcTransNum, int statusNum, string DevSN, string[] EventTime) {
             int pageSize = 8;
             return HandleClientReq.homeAll(type, statusNo,mcTransNo,mcTransNum, statusNum,DevSN, EventTime,pageSize);

@@ -125,12 +125,14 @@ namespace AirWebServer.utils {
         }
 
         private static HomeDataObject handleResult(DataTable statusData, DataTable mcTransData, string type, int pageSize, int mcTransNo, int statusNo, int mcTransNum, int statusNum) {
-            List<DataRow> homeDataList = new List<DataRow>();
-            List<DataRow> statusDataList = new List<DataRow>();
-            List<DataRow> mcTransDataList = new List<DataRow>();
+            Dictionary<string, object> map;
+            List<Dictionary<string, object>> homeDataList = new List<Dictionary<string, object>>();
+            List<Dictionary<string, object>> mcTransDataList = new List<Dictionary<string, object>>();
             List<int> isMcTrans = new List<int>();
             DataTable AlarmData = new DataTable();
+            List<Dictionary<string, object>> AlarmDataList = new List<Dictionary<string, object>>();
             DataTable LoginData = new DataTable();
+            List<Dictionary<string, object>> LoginDataList = new List<Dictionary<string, object>>();
             HomeDataObject homeDataObject = new HomeDataObject();
             string sql;
 
@@ -138,13 +140,22 @@ namespace AirWebServer.utils {
             DateTime dtj;
 
             if (statusData != null) { 
-                foreach (DataRow dataRow in statusData.Rows) {
-                    statusDataList.Add(dataRow);
-                    homeDataList.Add(dataRow);
+                //测试：将每一行数据做成键值对，存入到homeDataList1中
+                foreach(DataRow row in statusData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in statusData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeDataList.Add(map);
                 }
 
-                foreach (DataRow dataRow in mcTransData.Rows)
-                    mcTransDataList.Add(dataRow);
+                foreach (DataRow row in mcTransData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in mcTransData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    mcTransDataList.Add(map);
+                }
 
                 int index = 0;
                 for (int i = 0; i < mcTransDataList.Count; i++) {
@@ -178,9 +189,14 @@ namespace AirWebServer.utils {
                 //homeData = homeData.slice(0,pageSize);
                 homeDataList = homeDataList.GetRange(0, pageSize);
             } else {
-                foreach (DataRow dataRow in mcTransData.Rows) {
-                    homeDataList.Add(dataRow);
+                foreach (DataRow row in mcTransData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in mcTransData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeDataList.Add(map);
                 }
+
                 for (int i = 0; i < mcTransDataList.Count; i++)
                     isMcTrans.Add(i);
             }
@@ -211,15 +227,33 @@ namespace AirWebServer.utils {
             if (dataLength != isMcTrans.Count()) {
                 for(int i = 0; i < homeDataList.Count(); i++) {
                     if (!isMcTrans.Contains<int>(i)) {
+
                         sql = $"select * from TABLE_Alarm where EVENT_TIME = '{homeDataList[i]["EventTime"]}' and DevSN = '{homeDataList[i]["DevSN"]}'";
                         AlarmData = DbUtil.ExecuteQuery(sql);
                         if (AlarmData.Rows.Count != 0) {
-                            homeDataList[i]["alarm"] = AlarmData;
+                            //此条row是Alarm类型
+                            foreach (DataRow row in AlarmData.Rows) {
+                                map = new Dictionary<string, object>();
+                                foreach (DataColumn column in AlarmData.Columns) {
+                                    map.Add(column.ToString(), row[column]);
+                                }
+                                AlarmDataList.Add(map);
+                            }
+                            homeDataList[i].Add("alarm", AlarmDataList);
                         }
+
                         sql = $"select * from Device_Login where LoginTime = '{homeDataList[i]["EventTime"]}.000' and DevSN = '{homeDataList[i]["DevSN"]}'";
                         LoginData = DbUtil.ExecuteQuery(sql);
                         if (LoginData.Rows.Count != 0) {
-                            homeDataList[i]["login"] = LoginData;
+                            //此条row是Login类型
+                            foreach (DataRow row in LoginData.Rows) {
+                                map = new Dictionary<string, object>();
+                                foreach (DataColumn column in LoginData.Columns) {
+                                    map.Add(column.ToString(), row[column]);
+                                }
+                                LoginDataList.Add(map);
+                            }
+                            homeDataList[i].Add("login", LoginDataList);
                         }
                     }
                 }
