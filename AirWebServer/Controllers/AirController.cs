@@ -27,10 +27,31 @@ namespace AirWebServer.Controllers{
     [ApiController]
     public class homeController : ControllerBase {
         [HttpGet]
-        // api/home/homeAll
-        public ActionResult<HomeDataObject> homeAll(string type, int statusNo, int mcTransNo, int mcTransNum, int statusNum, string DevSN, string[] EventTime) {
+        // api/home/All
+        public ActionResult<HomeDataObject> All(string type, int statusNo, int mcTransNo, int mcTransNum, int statusNum, string DevSN, string[] EventTime) {
             int pageSize = 8;
             return HandleClientReq.homeAll(type, statusNo,mcTransNo,mcTransNum, statusNum,DevSN, EventTime,pageSize);
+        }
+
+        [HttpGet]
+        // api/home/Status
+        public ActionResult<HomeDataObject> Status(string type, int statusNo, string DevSN,string[] Index, string[] EventTime, string dataType) {
+            int pageSize = 8;
+            return HandleClientReq.homeStatus(type, statusNo, DevSN, Index, EventTime, pageSize);
+        }
+
+        [HttpGet]
+        // api/home/AlarmOrLogin
+        public ActionResult<HomeDataObject> AlarmOrLogin(string type, int statusNo, string DevSN, string[] Index, string[] EventTime,string dataType) {
+            int pageSize = 8;
+            return HandleClientReq.homeAlarmOrLogin(type, statusNo, DevSN, Index, EventTime, dataType, pageSize);
+        }
+
+        [HttpGet]
+        // api/home/McTrans
+        public ActionResult<HomeDataObject> McTrans(string type, int mcTransNo, string DevSN, string[] Index, string[] EventTime, string[] dataType) {
+            int pageSize = 8;
+            return HandleClientReq.homeMcTrans(type, mcTransNo, DevSN, Index, EventTime, dataType, pageSize);
         }
     }
 }

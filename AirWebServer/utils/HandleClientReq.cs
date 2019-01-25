@@ -23,10 +23,10 @@ namespace AirWebServer.utils {
             if (type == "first" || type == "right") {
                 //查找Device_Status表
                 sql = $"select no= Identity(int,1,1),* Into #status From Device_Status " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     "order by EventTime DESC " +
                     $"Select * From #status where no>{statusNo} and no <= {pageSize + statusNo}" +
                     " Drop Table #status ";
@@ -35,10 +35,10 @@ namespace AirWebServer.utils {
 
                 //查找McTrans表
                 sql = $"select no= Identity(int,1,1),* Into #mctrans From McTrans " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     "order by EventTime DESC " +
                     $"Select * From #mctrans where no>{mcTransNo} and no <= {pageSize + mcTransNo}" +
                     " Drop Table #mctrans ";
@@ -50,18 +50,18 @@ namespace AirWebServer.utils {
             } else if (type == "last") {
                 //查找Device_Status表符合条件的count
                 sql = $"select count=count(*) From Device_Status " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}";
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}";
                 statusNo = int.Parse(DbUtil.ExecuteQuery(sql).Rows[0]["count"].ToString());
 
                 //查找McTrans表符合条件的count
                 sql = $"select count=count(*) From McTrans " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}";
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}";
                 mcTransNo = int.Parse(DbUtil.ExecuteQuery(sql).Rows[0]["count"].ToString());
 
                 int total = statusNo + mcTransNo;
@@ -70,19 +70,19 @@ namespace AirWebServer.utils {
 
                 //查找Device_Status表
                 sql = $"select top {pageSize} * From Device_Status " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     " order by EventTime ";
                 statusData = DbUtil.ExecuteQuery(sql);
 
                 //查找McTrans表
                 sql = $"select top {pageSize} * From McTrans " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     " order by EventTime ";
                 mcTransData = DbUtil.ExecuteQuery(sql);
 
@@ -93,30 +93,30 @@ namespace AirWebServer.utils {
                 //查找Device_Status表
                 sql = $"select top {pageSize} * From Device_Status " +
                     $"where EventTime in (select top {statusNo - statusNum} EventTime from Device_Status " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     "order by EventTime DESC) " +
-                    $"{(DevSN != null || EventTime[0] != null ? " and " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " and " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     " order by EventTime ";
                 statusData = DbUtil.ExecuteQuery(sql);
 
                 //查找McTrans表
                 sql = $"select top {pageSize} * From McTrans " +
                     $"where EventTime in (select top {mcTransNo - mcTransNum} EventTime from McTrans " +
-                    $"{(DevSN != null || EventTime[0] != null ? " where " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " where " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     "order by EventTime DESC) " +
-                    $"{(DevSN != null || EventTime[0] != null ? " and " : "")}" +
+                    $"{(DevSN != null || EventTime[0] != "undefined" ? " and " : "")}" +
                     $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
-                    $"{(EventTime[0] != null ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
-                    $"{(EventTime[1] != null ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
                     " order by EventTime ";
                 mcTransData = DbUtil.ExecuteQuery(sql);
             }
@@ -139,9 +139,9 @@ namespace AirWebServer.utils {
             DateTime dti;
             DateTime dtj;
 
-            if (statusData != null) { 
+            if (statusData != null) {
                 //测试：将每一行数据做成键值对，存入到homeDataList1中
-                foreach(DataRow row in statusData.Rows) {
+                foreach (DataRow row in statusData.Rows) {
                     map = new Dictionary<string, object>();
                     foreach (DataColumn column in statusData.Columns) {
                         map.Add(column.ToString(), row[column]);
@@ -225,7 +225,7 @@ namespace AirWebServer.utils {
 
             //判断homeDataList中的statusData数据是否是Alarm/Login数据，如果是，需要添加额外的字段
             if (dataLength != isMcTrans.Count()) {
-                for(int i = 0; i < homeDataList.Count(); i++) {
+                for (int i = 0; i < homeDataList.Count(); i++) {
                     if (!isMcTrans.Contains<int>(i)) {
 
                         sql = $"select * from TABLE_Alarm where EVENT_TIME = '{homeDataList[i]["EventTime"]}' and DevSN = '{homeDataList[i]["DevSN"]}'";
@@ -263,6 +263,278 @@ namespace AirWebServer.utils {
             homeDataObject.isMcTrans = isMcTrans.ToArray();
             homeDataObject.statusNo = statusNo;
             homeDataObject.mcTransNo = mcTransNo;
+            return homeDataObject;
+        }
+
+        public static ActionResult<HomeDataObject> homeStatus(string type, int statusNo, string DevSN, string[] Index, string[] EventTime, int pageSize) {
+            //仅一级菜单时调用，仅包含Device_Status数据
+            string sql;
+            DataTable statusData = new DataTable();
+            Dictionary<string, Object> map;
+            List<Dictionary<string, Object>> homeDataList = new List<Dictionary<string, object>>();
+            HomeDataObject homeDataObject = new HomeDataObject();
+            if (type != "last") {
+                switch (type) {
+                    case "first":
+                        statusNo = 0;
+                        break;
+                    case "left":
+                        statusNo -= 1;
+                        break;
+                    default:
+                        statusNo = +1;
+                        break;
+                }
+
+                sql = $"select no= Identity(int,1,1),* Into #status From Device_Status " +
+                    $"{((DevSN != null || Index[0] != "undefined" || Index[1] != "undefined" || EventTime[0] != "undefined" || EventTime[1] != "undefined") ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    "order by EventTime DESC " +
+                    $"Select * From #status where no>{statusNo * pageSize} and no <= {(statusNo + 1) * pageSize}" +
+                    " Drop Table #status ";
+                statusData = DbUtil.ExecuteQuery(sql);
+
+                foreach (DataRow row in statusData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in statusData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeDataList.Add(map);
+                }
+
+                homeDataObject.homeData = homeDataList.ToArray();
+                homeDataObject.isMcTrans = (new List<int>()).ToArray();
+                homeDataObject.statusNo = statusNo;
+                homeDataObject.mcTransNo = 0;
+
+                return homeDataObject;
+            } else {
+                sql = $"select count=count(*) From Device_Status " +
+                    $"{(DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}";
+                int count = int.Parse(DbUtil.ExecuteQuery(sql).Rows[0]["count"].ToString());
+                if (count % pageSize != 0)
+                    statusNo = (int)Math.Floor((double)count / pageSize);
+                else
+                    statusNo = count / pageSize - 1;
+
+                sql = $"select no= Identity(int,1,1),* Into #status From Device_Status " +
+                    $"{((DevSN != null || Index[0] != "undefined" || Index[1] != "undefined" || EventTime[0] != "undefined" || EventTime[1] != "undefined") ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    "order by EventTime DESC " +
+                    $"select top {pageSize} * from #status where no>{statusNo * pageSize}" +
+                    " Drop Table #status ";
+                statusData = DbUtil.ExecuteQuery(sql);
+
+                foreach (DataRow row in statusData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in statusData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeDataList.Add(map);
+                }
+
+                homeDataObject.homeData = homeDataList.ToArray();
+                homeDataObject.isMcTrans = (new List<int>()).ToArray();
+                homeDataObject.statusNo = statusNo;
+                homeDataObject.mcTransNo = 0;
+
+                return homeDataObject;
+            }
+        }
+
+        public static ActionResult<HomeDataObject> homeAlarmOrLogin(string type, int statusNo, string DevSN, string[] Index, string[] EventTime, string dataType, int pageSize) {
+            string sql;
+            string table = (dataType == "Alarm" ? "TABLE_Alarm" : "Device_Login");
+            string time = (dataType == "Alarm" ? "EVENT_TIME" : "LoginTime");
+            List<Dictionary<string, Object>> homeDataList = new List<Dictionary<string, object>>();
+            // 最终要返回的数据
+            HomeDataObject homeDataObject = new HomeDataObject();
+
+            if (type != "last") {
+                switch (type) {
+                    case "first":
+                        statusNo = 0;
+                        break;
+                    case "left":
+                        statusNo -= 1;
+                        break;
+                    default:
+                        statusNo += 1;
+                        break;
+                }
+                homeDataList = select(statusNo, DevSN, Index, EventTime, pageSize, table, time, dataType);
+            } else {
+                sql = $"select count=count(*) From {table} " +
+                    $"{(DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}";
+                int count = int.Parse(DbUtil.ExecuteQuery(sql).Rows[0]["count"].ToString());
+                if (count % pageSize != 0)
+                    statusNo = (int)Math.Floor((double)count / pageSize);
+                else
+                    statusNo = count / pageSize - 1;
+                homeDataList = select(statusNo, DevSN, Index, EventTime, pageSize, table, time, dataType);
+            }
+
+
+            homeDataObject.homeData = homeDataList.ToArray();
+            homeDataObject.isMcTrans = (new List<int>()).ToArray();
+            homeDataObject.statusNo = statusNo;
+            homeDataObject.mcTransNo = 0;
+
+            return homeDataObject;
+        }
+
+        private static List<Dictionary<string, Object>> select(int statusNo, string DevSN, string[] Index, string[] EventTime, int pageSize, string table, string time, string dataType) {
+            // 此方法服务于AlarmOrLogin方法
+            string sql;
+            Dictionary<string, Object> map;
+            // 从alarm/login表中检索处的table
+            DataTable alarmOrLoginData = new DataTable();
+            DataTable specificStatusData = new DataTable();
+            List<Dictionary<string, Object>> alarmOrLoginDataList = new List<Dictionary<string, object>>();
+            List<Dictionary<string, Object>> homeDataList = new List<Dictionary<string, object>>();
+
+            sql = $"select no= Identity(int,1,1),* Into #table From {table} " +
+                    $"{((DevSN != null || Index[0] != "undefined" || Index[1] != "undefined" || EventTime[0] != "undefined" || EventTime[1] != "undefined") ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + time + ">='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and " + time + "<='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    $"order by {time} DESC " +
+                    $"Select * From #table where no>{statusNo * pageSize} and no <= {(statusNo + 1) * pageSize}" +
+                    " Drop Table #table ";
+            // 从alarm/login 表中检索数据
+            alarmOrLoginData = DbUtil.ExecuteQuery(sql);
+
+            // 将从alarm/login表中获取的数据由 dataTable -> list
+            foreach (DataRow row in alarmOrLoginData.Rows) {
+                map = new Dictionary<string, object>();
+                foreach (DataColumn column in alarmOrLoginData.Columns) {
+                    map.Add(column.ToString(), row[column]);
+                }
+                alarmOrLoginDataList.Add(map);
+            }
+
+            // foreach每一个从alarm/login表中检索到的row
+            foreach (Dictionary<string, Object> row in alarmOrLoginDataList) {
+                DateTime LoginTime = (DateTime)row["LoginTime"];
+                string LoginTimeString = LoginTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+                sql = $"select * from Device_Status where DevSN = '{row["DevSN"]}' and EventTime = '{(dataType == "Alarm" ? row["EVENT_TIME"] : LoginTimeString)}'";
+                // 从 Device_Status 中找到的符合当前 alarm/login 的 status 数据
+                specificStatusData = DbUtil.ExecuteQuery(sql);
+
+                map = new Dictionary<string, object>();
+                foreach (DataColumn column in specificStatusData.Columns)
+                    map.Add(column.ToString(), (specificStatusData.Rows)[0][column]);
+
+                map.Add((dataType == "Alarm" ? "alarm" : "login"), row);
+                homeDataList.Add(map);
+            }
+
+            return homeDataList;
+        }
+
+        public static ActionResult<HomeDataObject> homeMcTrans(string type, int mcTransNo, string DevSN, string[] Index, string[] EventTime, string[] dataType, int pageSize) {
+            string sql;
+            DataTable mcTransData = new DataTable();
+            List<Dictionary<string, Object>> homeData = new List<Dictionary<string, object>>();
+            Dictionary<string, Object> map;
+            HomeDataObject homeDataObject = new HomeDataObject();
+
+            if (type != "last") {
+                switch (type) {
+                    case "first":
+                        mcTransNo = 0;
+                        break;
+                    case "left":
+                        mcTransNo -= 1;
+                        break;
+                    default:
+                        mcTransNo += 1;
+                        break;
+                }
+                sql = $"select no= Identity(int,1,1),* Into #mctrans From McTrans " +
+                    $"{(DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" || dataType[1] != "undefined" ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    $"{(dataType[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" ? "and " : "") + (dataType[1] == "other" ? "EventCode!=128 and EventCode!=129 " : ("EventCode='" + dataType[1] + "'"))) : "")}" +
+                    "order by EventTime DESC " +
+                    $"Select * From #mctrans where no>{mcTransNo * pageSize} and no <= {pageSize * (mcTransNo + 1)}" +
+                    " Drop Table #mctrans ";
+                mcTransData = DbUtil.ExecuteQuery(sql);
+
+                foreach (DataRow row in mcTransData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in mcTransData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeData.Add(map);
+                }
+            } else {
+                sql = $"select count=count(*) From McTrans " +
+                    $"{(DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" || dataType[1] != "undefined" ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    $"{(dataType[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" ? "and " : "") + (dataType[1] == "other" ? "EventCode!=128 and EventCode!=129 " : ("EventCode='" + dataType[1] + "'"))) : "")}";
+
+                int count = int.Parse(DbUtil.ExecuteQuery(sql).Rows[0]["count"].ToString());
+                if (count % pageSize != 0)
+                    mcTransNo = (int)Math.Floor((double)count / pageSize);
+                else
+                    mcTransNo = count / pageSize - 1;
+
+                sql = $"select no= Identity(int,1,1),* Into #mcTrans From McTrans " +
+                    $"{((DevSN != null || Index[0] != "undefined" || Index[1] != "undefined" || EventTime[0] != "undefined" || EventTime[1] != "undefined") ? " where " : "")}" +
+                    $"{(DevSN != null ? ("DevSN ='" + DevSN + "' ") : "")}" +
+                    $"{(EventTime[0] != "undefined" ? ((DevSN != null ? "and " : "") + "EventTime>='" + EventTime[0] + "'") : "")}" +
+                    $"{(EventTime[1] != "undefined" ? (" and EventTime <='" + EventTime[1] + "'") : "")}" +
+                    $"{(Index[0] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" ? "and " : "") + "C_INDEX >= '" + Index[0] + "'") : "")}" +
+                    $"{(Index[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" ? "and " : "") + "C_INDEX <= '" + Index[1] + "'") : "")}" +
+                    $"{(dataType[1] != "undefined" ? ((DevSN != null || EventTime[0] != "undefined" || Index[0] != "undefined" || Index[1] != "undefined" ? "and " : "") + (dataType[1] == "other" ? "EventCode!=128 and EventCode!=129 " : ("EventCode='" + dataType[1] + "'"))) : "")}" +
+                "order by EventTime DESC " +
+                    $"select top {pageSize} * from #mcTrans where no>{mcTransNo * pageSize}" +
+                    " Drop Table #mcTrans ";
+                mcTransData = DbUtil.ExecuteQuery(sql);
+
+                foreach (DataRow row in mcTransData.Rows) {
+                    map = new Dictionary<string, object>();
+                    foreach (DataColumn column in mcTransData.Columns) {
+                        map.Add(column.ToString(), row[column]);
+                    }
+                    homeData.Add(map);
+                }
+            }
+
+            homeDataObject.homeData = homeData.ToArray();
+            homeDataObject.isMcTrans = new int[] { 0,1,2,3,4,5,6,7};
+            homeDataObject.statusNo = 0;
+            homeDataObject.mcTransNo = mcTransNo;
+
             return homeDataObject;
         }
     }
