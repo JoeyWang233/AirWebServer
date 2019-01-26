@@ -139,7 +139,7 @@ namespace AirWebServer.utils {
             DateTime dti;
             DateTime dtj;
 
-            if (statusData != null) {
+            if (statusData.Rows.Count != 0) {
                 //测试：将每一行数据做成键值对，存入到homeDataList1中
                 foreach (DataRow row in statusData.Rows) {
                     map = new Dictionary<string, object>();
@@ -179,6 +179,7 @@ namespace AirWebServer.utils {
                 if (homeDataList.Count < pageSize) {
                     int len = homeDataList.Count();
                     int extraLen = pageSize - len;
+                    // out of range,maybe mcTransDataList.length is short of isMcTrans.Count+extraLen
                     for (int i = isMcTrans.Count; i < extraLen + isMcTrans.Count; i++) {
                         homeDataList.Add(mcTransDataList[i]);
                     }
@@ -435,17 +436,14 @@ namespace AirWebServer.utils {
 
             // foreach每一个从alarm/login表中检索到的row
             foreach (Dictionary<string, Object> row in alarmOrLoginDataList) {
-                DateTime LoginTime = (DateTime)row["LoginTime"];
-                string LoginTimeString = LoginTime.ToString("yyyy-MM-dd HH:mm:ss");
-
-                sql = $"select * from Device_Status where DevSN = '{row["DevSN"]}' and EventTime = '{(dataType == "Alarm" ? row["EVENT_TIME"] : LoginTimeString)}'";
+                sql = $"select * from Device_Status where DevSN = '{row["DevSN"]}' and EventTime = '{(dataType == "Alarm" ? row["EVENT_TIME"] : ((DateTime)row["LoginTime"]).ToString("yyyy-MM-dd HH:mm:ss"))}'";
                 // 从 Device_Status 中找到的符合当前 alarm/login 的 status 数据
                 specificStatusData = DbUtil.ExecuteQuery(sql);
+
 
                 map = new Dictionary<string, object>();
                 foreach (DataColumn column in specificStatusData.Columns)
                     map.Add(column.ToString(), (specificStatusData.Rows)[0][column]);
-
                 map.Add((dataType == "Alarm" ? "alarm" : "login"), row);
                 homeDataList.Add(map);
             }
@@ -531,7 +529,7 @@ namespace AirWebServer.utils {
             }
 
             homeDataObject.homeData = homeData.ToArray();
-            homeDataObject.isMcTrans = new int[] { 0,1,2,3,4,5,6,7};
+            homeDataObject.isMcTrans = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
             homeDataObject.statusNo = 0;
             homeDataObject.mcTransNo = mcTransNo;
 
