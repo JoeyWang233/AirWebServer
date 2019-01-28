@@ -27,5 +27,22 @@ namespace AirWebServer.utils {
             }
             return dataTable;
         }
+
+        public static int  ExecuteUpdate(string sqlStr) {
+            conn = new SqlConnection(strConn);
+            int a = -1;
+            try {
+                conn.Open();
+                cmd = new SqlCommand(sqlStr,conn);
+                a = cmd.ExecuteNonQuery();
+            } catch (Exception) {
+                return a;
+                throw;
+            } finally {
+                if (conn.State == ConnectionState.Open)
+                    conn.Close();
+            }
+            return a;
+        }
     }
 }

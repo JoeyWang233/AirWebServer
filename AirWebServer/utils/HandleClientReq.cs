@@ -535,5 +535,104 @@ namespace AirWebServer.utils {
 
             return homeDataObject;
         }
+
+        public static ActionResult<object[]> getDetail(string DevSN) {
+            Dictionary<string, object> map;
+            List<object> detailDataList = new List<object>();
+            DataTable detailData = new DataTable();
+            DataTable DevIDData = new DataTable();
+
+            string sql = $"select top 1 * from Device_Status where DevSN='{DevSN}' order by EventTime desc";
+            detailData = DbUtil.ExecuteQuery(sql);
+
+            map = new Dictionary<string, object>();
+            foreach (DataColumn column in detailData.Columns) {
+                map.Add(column.ToString(), detailData.Rows[0][column]);
+            }
+
+            detailDataList.Add(map);
+
+            sql = $"select DevID from Device_Lst where DevSN = '{DevSN}'";
+            DevIDData = DbUtil.ExecuteQuery(sql);
+            map = new Dictionary<string, object>();
+            map.Add(DevIDData.Columns[0].ToString(), DevIDData.Rows[0][DevIDData.Columns[0]]);
+            detailDataList.Add(map);
+
+            return detailDataList.ToArray();
+        }
+
+        public static ActionResult<object[]> getData(string DevSN, string No, int table, int pageSize) {
+            int localPageSize = 1;
+            string tab = "";
+            string sql;
+            DataTable data = new DataTable();
+            DataTable countTable = new DataTable();
+            int count;
+            List<Dictionary<string, object>> dataList = new List<Dictionary<string, object>>();
+            Dictionary<string, object> map;
+            List<object> getDataObject = new List<object>();
+
+            switch (table) {
+                case 1:
+                    tab = "Device_Status";
+                    break;
+                case 2:
+                    tab = "McTrans";
+                    localPageSize = pageSize;
+                    break;
+                case 3:
+                    tab = "TABLE_Alarm";
+                    localPageSize = pageSize;
+                    break;
+                default:
+                    break;
+            }
+
+            if (No != "last")
+                sql = $"select top {(tab == "Device_Status" ? 1 : localPageSize)} * from {tab} where C_INDEX not in (select top {(tab == "Device_Status" ? (Convert.ToInt32(No) - 1) : localPageSize * (Convert.ToInt32(No) - 1))} C_INDEX from {tab} where DevSN='{DevSN}' order by {(tab == "TABLE_Alarm" ? "EVENT_TIME" : "EventTime")} desc) and DevSN={DevSN} order by {(tab == "TABLE_Alarm" ? "EVENT_TIME" : "EventTime")} desc";
+            else
+                sql = $"select top {(tab == "Device_Status" ? 1 : localPageSize)} * from {tab} where DevSN='{DevSN}' order by {(tab=="TABLE_Alarm"?"EVENT_TIME":"EventTime")} ";
+
+            data = DbUtil.ExecuteQuery(sql);
+
+            foreach(DataRow row in data.Rows) {
+                map = new Dictionary<string, object>();
+                foreach(DataColumn column in data.Columns) {
+                    map.Add(column.ToString(), row[column]);
+                }
+                dataList.Add(map);
+            }
+
+            sql = $"select count=count(*) from {tab} where DevSN='{DevSN}'";
+
+            countTable = DbUtil.ExecuteQuery(sql);
+            count = (int)countTable.Rows[0]["count"];
+
+            getDataObject.Add(dataList.ToArray());
+            getDataObject.Add(count);
+
+            return getDataObject.ToArray();
+        }
+
+        public static ActionResult<Dictionary<string, object>> getProps(string DevSN, string table) {
+            string sql;
+            DataTable dataTable;
+            Dictionary<string, object> map;
+            sql = $"select top 1 * from {table} where DevSN='{DevSN}' {(table=="Device_Status"?"order by EventTime desc":"")}";
+            dataTable = DbUtil.ExecuteQuery(sql);
+
+            map = new Dictionary<string, object>();
+            foreach(DataColumn column in dataTable.Columns) {
+                map.Add(column.ToString(), dataTable.Rows[0][column]);
+            }
+
+            return map;
+        }
+
+        public static ActionResult<int> alterProps(string alteredProps, string DevSN) {
+            string sql;
+            sql = $"update Device_Lst set {alteredProps} where DevSN='{DevSN}'";
+            return DbUtil.ExecuteUpdate(sql);
+        }
     }
 }
